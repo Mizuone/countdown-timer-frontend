@@ -1,25 +1,20 @@
-import { CountdownRunningContext, CountdownTimeContext } from "../Countdown";
+import { CountdownStates, CountdownStatesContext, CountdownStatesType, CountdownTimeContext, CountdownTimerType } from "../CountdownContext";
 import { useContext, useEffect, useRef, useState } from "react";
 
 import { CountdownEditing } from "./CountdownEditing";
 
 export const CountdownTimer = () => {
     const [formattedTime, setFormattedTime] = useState<string>('');
-    const [isEditing, setIsEditing] = useState<boolean>(false);
 
-    const { countdown, setCountdown } = useContext(CountdownTimeContext);
-    const { setRunning } = useContext(CountdownRunningContext); 
+    const { countdown } = useContext<CountdownTimerType>(CountdownTimeContext);
+    const { states, setStates } = useContext<CountdownStatesType>(CountdownStatesContext); 
 
     const countDownRef = useRef<HTMLDivElement>(null);
-
-    const handleCountdownOnTimeout = () => {
-        setCountdown((prevState: number) => Math.max(prevState - 1, 0));
-    }
 
     const formatTime = (time: number) => {
         if (time <= 0) {
             setFormattedTime('00:00');
-            setRunning(false);
+            setStates({ ...states, running: false });
             return;
         }
 
@@ -33,7 +28,7 @@ export const CountdownTimer = () => {
     }
 
     const enterEditingMode = (event: React.MouseEvent<HTMLDivElement, MouseEvent> | KeyboardEvent) => {
-        setIsEditing(true);
+        setStates((prevStates: CountdownStates) => ({...prevStates, editing: true}));
     }
 
     useEffect(() => {
@@ -49,7 +44,7 @@ export const CountdownTimer = () => {
             className='countdown p-6 pt-2 border-2 border-gray-300 rounded text-gray-300 cursor-pointer hover:border-gray-200 hover:text-gray-200'
             onClick={(e) => enterEditingMode(e)}
         >
-            {isEditing ? (
+            {states.editing ? (
                 <CountdownEditing />
             ) : (
                 <p className="text-9xl">

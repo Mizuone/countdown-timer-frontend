@@ -1,44 +1,26 @@
 import './Countdown.css';
 
-import { createContext, useState } from "react"
+import { CountdownStates, CountdownStatesContext, CountdownTimeContext } from './CountdownContext';
 
 import { CountdownControls } from './subcomponents/CountdownControls';
 import { CountdownTimer } from './subcomponents/CountdownTimer';
-
-export interface CountdownTimerType {
-    countdown: number;
-    setCountdown: (value: number) => void;
-};
-
-export interface CountdownRunningType {
-    running: boolean;
-    setRunning: (value: boolean) => void;
-};
-
-
-export const CountdownTimeContext = createContext<CountdownTimerType>({
-    countdown: 0,
-    setCountdown: (value: number) => {}
-});
-
-
-export const CountdownRunningContext = createContext<CountdownRunningType>({
-    running: false,
-    setRunning: (value: boolean) => {}
-});
+import { useState } from "react"
 
 export const Countdown = () => {
     const [countdown, setCountdown] = useState<number>(2707);
-    const [running, setRunning] = useState<boolean>(false); 
+    const [states, setStates] = useState<CountdownStates>({
+        editing: false,
+        running: false,
+    }); 
 
     return (
         <CountdownTimeContext.Provider value={{
             countdown,
             setCountdown
         }}>
-            <CountdownRunningContext.Provider value={{
-                running,
-                setRunning
+            <CountdownStatesContext.Provider value={{
+                states,
+                setStates
             }}>
                 <div className="mt-12 p-2">
                     <div className="flex w-full justify-center flex-col flex-wrap items-center">
@@ -46,7 +28,7 @@ export const Countdown = () => {
                         <CountdownControls />
                     </div>
                 </div>
-            </CountdownRunningContext.Provider>
+            </CountdownStatesContext.Provider>
         </CountdownTimeContext.Provider>
     )
 }

@@ -1,6 +1,10 @@
+import { useContext, useState } from "react";
 
+import { CountdownTimeContext } from "../CountdownContext";
 
 export const CountdownEditing = () => {
+    const { countdown } = useContext(CountdownTimeContext);
+
     const [newCountdownTime, setNewCountdownTime] = useState<number>(Math.floor(countdown / 60));
 
     return (
