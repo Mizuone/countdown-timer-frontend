@@ -1,20 +1,27 @@
 import { CountdownStates, CountdownStatesContext, CountdownStatesType, CountdownTimeContext, CountdownTimerType } from "../CountdownContext";
 import { useContext, useEffect, useRef } from "react";
 
+import { CountdownSounds } from "../../../assets/sounds/CountdownSounds";
+
 export const CountdownControls = () => {
     const { countdown, setCountdown } = useContext<CountdownTimerType>(CountdownTimeContext);
     const { states, setStates } = useContext<CountdownStatesType>(CountdownStatesContext);
 
     const intervalRef = useRef<number>(0);
 
-    const toggleCountdownRunning = () => setStates((prevState: CountdownStates) =>  ({
-        ...states,
-        running: !prevState.running
-    }));
+    const toggleCountdownRunning = () => setStates((prevState: CountdownStates) =>  {
+            if (!prevState.running === true) {
+                new Audio(CountdownSounds.start).play();
+            } else {
+                new Audio(CountdownSounds.stop).play();
+            }
+
+            return { ...states, running: !prevState.running}
+        }
+    );
 
     const handleSpacebarPressed = (event: KeyboardEvent) => {
         if (event.code === 'Space') {
-            console.log(states.editing, ' onspace pressed');
             if (states.editing) {
                 setStates({...states, editing: false});
             }
@@ -33,7 +40,7 @@ export const CountdownControls = () => {
         return () => {
             document.removeEventListener('keypress', handleSpacebarPressed);
         }
-    }, []);
+    }, [handleSpacebarPressed]);
 
     useEffect(() => {
         if (states.running) {
@@ -42,10 +49,6 @@ export const CountdownControls = () => {
             clearInterval(intervalRef.current);
         }
     }, [states.running]);
-
-    useEffect(() => {
-        console.log(states.editing);
-    }, [states.editing])
 
     return (
         <div className="mt-16">

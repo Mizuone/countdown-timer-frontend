@@ -7,7 +7,7 @@ import { CountdownTimer } from './subcomponents/CountdownTimer';
 import { useState } from "react"
 
 export const Countdown = () => {
-    const [countdown, setCountdown] = useState<number>(2707);
+    const [countdown, setCountdown] = useState<number>(2505); // 7500 // Add a max set countdown to 57,600, which is 16 hours
     const [states, setStates] = useState<CountdownStates>({
         editing: false,
         running: false,

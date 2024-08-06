@@ -2,6 +2,7 @@ import { CountdownStates, CountdownStatesContext, CountdownStatesType, Countdown
 import { useContext, useEffect, useRef, useState } from "react";
 
 import { CountdownEditing } from "./CountdownEditing";
+import { CountdownSounds } from "../../../assets/sounds/CountdownSounds";
 
 export const CountdownTimer = () => {
     const [formattedTime, setFormattedTime] = useState<string>('');
@@ -15,21 +16,29 @@ export const CountdownTimer = () => {
         if (time <= 0) {
             setFormattedTime('00:00');
             setStates({ ...states, running: false });
+
+            new Audio(CountdownSounds.finished).play();
             return;
         }
 
-        const minutes = Math.floor(time / 60);
-        const seconds = time % 60;
+        const totalMinutes = Math.floor(time / 60);
 
+        const hours: number = Math.floor(totalMinutes / 60);
+        const minutes: number = Math.floor(totalMinutes % 60);
+        const seconds: number = time % 60;
+
+        const formattedHours: String = hours > 0 ? `${hours.toString()}:` : '';
         const formatedMinutes: String = minutes < 10 ? `0${minutes}` : minutes.toString();
         const formatedSeconds: String = seconds < 10 ? `0${seconds}` : seconds.toString();
 
-        setFormattedTime(`${formatedMinutes}:${formatedSeconds}`);
+        setFormattedTime(`${formattedHours}${formatedMinutes}:${formatedSeconds}`);
     }
 
     const enterEditingMode = (event: React.MouseEvent<HTMLDivElement, MouseEvent> | KeyboardEvent) => {
-        setStates((prevStates: CountdownStates) => ({...prevStates, editing: true}));
-    }
+        event.stopPropagation();
+
+        setStates((prevStates: CountdownStates) => ({...prevStates, editing: true, running: false}));
+     }
 
     useEffect(() => {
         formatTime(countdown);
@@ -45,7 +54,7 @@ export const CountdownTimer = () => {
             onClick={(e) => enterEditingMode(e)}
         >
             {states.editing ? (
-                <CountdownEditing />
+                <CountdownEditing countDownRef={countDownRef} />
             ) : (
                 <p className="text-9xl">
                     {formattedTime}
