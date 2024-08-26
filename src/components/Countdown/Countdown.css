@@ -1,0 +1,11 @@
+.countdown:hover {
+    background-color: rgba(75, 75, 75, 0.1);
+}
+
+svg path {
+    color: #d1d5db;
+}
+
+button:disabled svg path {
+    color: #747677;
+}
